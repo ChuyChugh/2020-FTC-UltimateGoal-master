@@ -12,6 +12,7 @@ public class FirstTest extends OpMode {
     private Motor fL, bL, fR, bR;
     private MecanumDrive drive;
     private RevIMU imu;
+    //this is just for testing
     private static double multiplier = 0.5;
     private GamepadEx gm1;
     @Override
