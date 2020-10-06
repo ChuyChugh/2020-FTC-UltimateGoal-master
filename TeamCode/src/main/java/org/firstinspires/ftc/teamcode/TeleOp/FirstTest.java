@@ -14,7 +14,6 @@ public class FirstTest extends OpMode {
     private RevIMU imu;
     //this is just for testing
     private static double multiplier = 0.5;
-    private GamepadEx gm1;
     @Override
     public void init() {
         fL = new Motor(hardwareMap, "fL");
@@ -23,26 +22,25 @@ public class FirstTest extends OpMode {
         bR = new Motor(hardwareMap, "bR");
         drive = new MecanumDrive(fL, fR, bL, bR);
         imu = new RevIMU(hardwareMap);
-        gm1 = new GamepadEx(gamepad1);
     }
 
     @Override
     public void loop() {
 
-        if(gm1.getButton(GamepadKeys.Button.DPAD_UP)){
+        if(gamepad1.dpad_up){
             multiplier += 0.05;
             if(multiplier > 1){
                 multiplier = 1;
             }
         }
-        if(gm1.getButton(GamepadKeys.Button.DPAD_DOWN)){
+        if(gamepad1.dpad_down){
             multiplier -= 0.05;
             if(multiplier < 0){
                 multiplier = 0;
             }
         }
         drive.driveFieldCentric(
-                -gamepad1.left_stick_x * multiplier,
+                -gamepad1.left_stick_x * multiplier * 1.5,
                 -gamepad1.left_stick_y * multiplier,
                 -gamepad1.right_stick_x * multiplier,
                 Math.toRadians(imu.getHeading())
