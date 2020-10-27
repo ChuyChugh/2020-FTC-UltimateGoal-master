@@ -12,6 +12,8 @@ public class FirstTest extends OpMode {
     private Motor fL, bL, fR, bR;
     private MecanumDrive drive;
     private RevIMU imu;
+    private GamepadEx driverOp;
+    private ButtonReader speedUpToggle, speedDownToggle;
     //this is just for testing
     private static double multiplier = 0.5;
     @Override
@@ -21,28 +23,34 @@ public class FirstTest extends OpMode {
         bL = new Motor(hardwareMap, "bL");
         bR = new Motor(hardwareMap, "bR");
         drive = new MecanumDrive(fL, fR, bL, bR);
+        driverOp = new GamepadEx(gamepad1);
+        speedUpToggle = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_UP);
+        speedDownToggle = new ButtonReader(
+          driverOp, GamepadKeys.Button.DPAD_DOWN
+        );
         imu = new RevIMU(hardwareMap);
     }
 
     @Override
     public void loop() {
-
-        if(gamepad1.dpad_up){
-            multiplier += 0.05;
-            if(multiplier > 1){
-                multiplier = 1;
+        if (speedUpToggle.wasJustPressed()) {
+            if (multiplier < 0.95) {
+              multiplier += 0.25;
+            } else {
+              multiplier = 0.25;
             }
         }
-        if(gamepad1.dpad_down){
-            multiplier -= 0.05;
-            if(multiplier < 0){
-                multiplier = 0;
+        if (speedDownToggle.wasJustPressed()) {
+            if (multiplier > 0.05) {
+              multiplier -= 0.25;
+            } else {
+              multiplier = 0.75;
             }
         }
         drive.driveFieldCentric(
-                -gamepad1.left_stick_x * multiplier * 1.5,
-                -gamepad1.left_stick_y * multiplier,
-                -gamepad1.right_stick_x * multiplier,
+                -driverOp.getLeftX() * multiplier * 1.5,
+                -driverOp.getLeftY() * multiplier,
+                -driverOp.getRightX() * multiplier,
                 Math.toRadians(imu.getHeading())
         );
         telemetry.addData("Power", multiplier);
